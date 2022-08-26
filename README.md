@@ -56,4 +56,4 @@ pipeline {
 - On the left of the Jenkins dashboard, click on New Item.
 - Enter the job name go-app-deployment.
 - Select Pipeline job and click on OK.
-- Under Pipeline section keep selected Pipeline script as Definition and add below given code in the Script
+- Under Pipeline section keep selected Pipeline script as Definition
