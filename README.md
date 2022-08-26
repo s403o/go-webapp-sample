@@ -1,182 +1,59 @@
-# go-webapp-sample
+## Deploying with MultiStage Pipeline using Jenkins
 
-[![license](https://img.shields.io/github/license/ybkuroki/go-webapp-sample?style=for-the-badge)](https://github.com/ybkuroki/go-webapp-sample/blob/master/LICENSE)
-[![report](https://goreportcard.com/badge/github.com/ybkuroki/go-webapp-sample?style=for-the-badge)](https://goreportcard.com/report/github.com/ybkuroki/go-webapp-sample)
-[![workflow](https://img.shields.io/github/workflow/status/ybkuroki/go-webapp-sample/check?label=check&style=for-the-badge&logo=github)](https://github.com/ybkuroki/go-webapp-sample/actions?query=workflow%3Acheck)
-[![release](https://img.shields.io/github/release/ybkuroki/go-webapp-sample?style=for-the-badge&logo=github)](https://github.com/ybkuroki/go-webapp-sample/releases)
-
-## Preface
-This repository is the sample of web application using golang.
-This sample uses [Echo](https://echo.labstack.com/) as web application framework, [Gorm](https://gorm.io/) as OR mapper and [Zap logger](https://pkg.go.dev/go.uber.org/zap) as logger.
-This sample application provides only several functions as Web APIs.
-Please refer to the 'Service' section about the detail of those functions.
-
-Also, this application contains the static contents such as html file, css file and javascript file which built [vuejs-webapp-sample](https://github.com/ybkuroki/vuejs-webapp-sample) project to easily check the behavior of those functions.
-So, you can check this application without starting a web server for front end.
-Please refer to the 'Starting Server' section about checking the behavior of this application.
-
-If you would like to develop a web application using golang, please feel free to use this sample.
-
-## Install
-Perform the following steps:
-1. Download and install [MinGW(gcc)](https://sourceforge.net/projects/mingw-w64/files/?source=navbar).
-1. Download and install [Visual Studio Code(VS Code)](https://code.visualstudio.com/).
-1. Download and install [Golang](https://golang.org/).
-1. Get the source code of this repository by the following command.
-    ```bash
-    go install github.com/ybkuroki/go-webapp-sample@latest
-    ```
-
-## Starting Server
-There are 2 methods for starting server.
-
-### Without Web Server
-1. Starting this web application by the following command.
-    ```bash
-    go run main.go
-    ```
-1. When startup is complete, the console shows the following message:
-    ```
-    http server started on [::]:8080
-    ```
-1. Access [http://localhost:8080](http://localhost:8080) in your browser.
-1. Login with the following username and password.
-    - username : ``test``
-    - password : ``test``
-
-### With Web Server
-#### Starting Application Server
-1. Starting this web application by the following command.
-    ```bash
-    go run main.go
-    ```
-1. When startup is complete, the console shows the following message:
-    ```
-    http server started on [::]:8080
-    ```
-1. Access [http://localhost:8080/api/health](http://localhost:8080/api/health) in your browser and confirm that this application has started.
-    ```
-    healthy
-    ```
-#### Starting Web Server
-1. Clone [vuejs-webapp-sample](https://github.com/ybkuroki/vuejs-webapp-sample) project and install some tools.
-1. Start by the following command.
-    ```bash
-    npm run serve
-    ```
-1. When startup is complete, the console shows the following message:
-    ```
-    DONE Compiled successfully in *****ms
-    
-    App running at:
-    - Local:   http://localhost:3000/
-    - Network: http://192.168.***.***:3000/
-    
-    Note that the development build is not optimized.
-    To create a production build, run npm run build.
-    ```
-1. Access [http://localhost:3000](http://localhost:3000) in your browser.
-1. Login with the following username and password.
-    - username : ``test``
-    - password : ``test``
-
-## Using Swagger
-In this sample, Swagger is enabled only when executed this application on the development environment.
-Swagger isn't enabled on the another environments in default.
-
-### Accessing to Swagger
-1. Start this application according to the 'Starting Application Server' section.
-2. Access [http://localhost:8080/swagger/index.html](http://localhost:8080/swagger/index.html) in your browser.
-
-### Updating the existing Swagger document
-1. Update some comments of some controllers.
-2. Download Swag library. (Only first time)
-    ```bash
-    go install github.com/swaggo/swag/cmd/swag@latest
-    ```
-3. Update ``docs/docs.go``.
-    ```bash
-    swag init
-    ```
-
-## Build executable file
-Build this source code by the following command.
-```bash
-go build main.go
+### Prerequisites
+- You will need to install SSH Build Agents and Pipeline plugins.
+- You will need to add credentials and will need to add dev and prod nodes.
+- In your pipeline script, you can set the default agent to none and can set the agent configuration for each stage like:
+```
+pipeline {
+    agent none
+    stages {
+        agent {
+            label {
+                label 'dev'
+                customWorkspace "/opt/go-app"
+              }
+        }
+---
+---
 ```
 
-## Project Map
-The follwing figure is the map of this sample project.
+### Solution
+#### Install Plugins:
+- Go to Manage Jenkins.
+- Click on Manage Plugins.
+- Under Available, search for SSH Build Agents plugin and select it.
+- Now search for Pipeline plugin and select it.
+- Now install these plugins.
+- Once installed click on Restart Jenkins when installation is complete and no jobs are running.
 
-```
-- go-webapp-sample
-  + config                  … Define configurations of this system.
-  + logger                  … Provide loggers.
-  + middleware              … Define custom middleware.
-  + migration               … Provide database migration service for development.
-  + router                  … Define routing.
-  + controller              … Define controllers.
-  + model                   … Define models.
-  + repository              … Provide a service of database access.
-  + service                 … Provide a service of book management.
-  + session                 … Provide session management.
-  + test                    … for unit test
-  - main.go                 … Entry Point.
-```
+#### Add Credentials:
+- Go to Manage Jenkins.
+- Click on Manage Credentials.
+- Click on (global) under Domains.
+- From the options on the left side, click on Add Credentials.
+- Enter bob under Username.
+- Enter caleston123 under Password.
+- Leave other options as it is and click on OK.
 
-## Services
-This sample provides 3 services: book management, account management, and master management.
-Regarding the detail of the API specification, please refer to the 'Using Swagger' section.
+#### Add Nodes:
+- Go to Manage Jenkins.
+- Click on Manage Nodes and Clouds.
+- From the options available on the left side, click on New Node.
+- Enter the Node name i.e dev.
+- Enable Permanent Agent option and click on OK.
+- Enter /opt under Remote root directory.
+- Enter dev under Labels.
+- Select Launch Agents via SSH under Launch method.
+- Enter gotest-dev01 under Host and select the credentials you created.
+- Under Host Key Verification Strategy, select Non verifying verification strategy.
+- Leave all other options as it is and click on Save
+- Click on the dev node and there shouldn't be any errors.
+- Just in case the dev node is in error state, then try to relaunch it.
+- Follow same steps for adding prod node, just take care about the node name, label and host.
 
-### Book Management
-There are the following services in the book management.
-
-|Service Name|HTTP Method|URL|Parameter|Summary|
-|:---|:---:|:---|:---|:---|
-|Get Service|GET|``/api/books/[BOOK_ID]``|Book ID|Get a book data.|
-|List/Search Service|GET|``/api/books?query=[KEYWORD]&page=[PAGE_NUMBER]&size=[PAGE_SIZE]``|Page, Keyword(Optional)|Get a list of books.|
-|Regist Service|POST|``/api/books``|Book|Regist a book data.|
-|Edit Service|PUT|``/api/books``|Book|Edit a book data.|
-|Delete Service|DELETE|``/api/books``|Book|Delete a book data.|
-
-### Account Management
-There are the following services in the Account management.
-
-|Service Name|HTTP Method|URL|Parameter|Summary|
-|:---|:---:|:---|:---|:---|
-|Login Service|POST|``/api/auth/login``|Session ID, User Name, Password|Session authentication with username and password.|
-|Logout Service|POST|``/api/auth/logout``|Session ID|Logout a user.|
-|Login Status Check Service|GET|``/api/auth/loginStatus``|Session ID|Check if the user is logged in.|
-|Login Username Service|GET|``/api/auth/loginAccount``|Session ID|Get the login user's username.|
-
-### Master Management
-There are the following services in the Master management.
-
-|Service Name|HTTP Method|URL|Parameter|Summary|
-|:---|:---:|:---|:---|:---|
-|Category List Service|GET|``/api/categories``|Nothing|Get a list of categories.|
-|Format List Service|GET|``/api/formats``|Nothing|Get a list of formats.|
-
-## Tests
-Create the unit tests only for the packages such as controller, service, model/dto and util. The test cases is included the regular cases and irregular cases. Please refer to the source code in each packages for more detail.
-
-The command for testing is the following:
-```bash
-go test ./... -v
-```
-
-## Libraries
-This sample uses the following libraries.
-
-|Library Name|Version|
-|:---|:---:|
-|echo|4.7.2|
-|gorm|1.23.8|
-|go-playground/validator.v9|9.31.0|
-|zap|1.21.0|
-
-## Contribution
-Please read [CONTRIBUTING.md](https://github.com/ybkuroki/go-webapp-sample/blob/master/CONTRIBUTING.md) for proposing new functions, reporting bugs and submitting pull requests before contributing to this repository.
-
-## License
-The License of this sample is *MIT License*.
+#### Create and Configure the job:
+- On the left of the Jenkins dashboard, click on New Item.
+- Enter the job name go-app-deployment.
+- Select Pipeline job and click on OK.
+- Under Pipeline section keep selected Pipeline script as Definition and add below given code in the Script
