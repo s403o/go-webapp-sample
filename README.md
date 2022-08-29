@@ -18,7 +18,7 @@ pipeline {
 ---
 ```
 
-### Solution
+### Solution steps
 #### Install Plugins:
 - Go to Manage Jenkins.
 - Click on Manage Plugins.
@@ -32,28 +32,28 @@ pipeline {
 - Click on Manage Credentials.
 - Click on (global) under Domains.
 - From the options on the left side, click on Add Credentials.
-- Enter bob under Username.
-- Enter caleston123 under Password.
+- Enter Username.
+- Enter Password.
 - Leave other options as it is and click on OK.
 
 #### Add Nodes:
 - Go to Manage Jenkins.
 - Click on Manage Nodes and Clouds.
 - From the options available on the left side, click on New Node.
-- Enter the Node name i.e dev.
+- Enter the Node name.
 - Enable Permanent Agent option and click on OK.
-- Enter /opt under Remote root directory.
-- Enter dev under Labels.
+- Enter Remote root directory.
+- Enter Labele name.
 - Select Launch Agents via SSH under Launch method.
-- Enter gotest-dev01 under Host and select the credentials you created.
+- Enter Host and select the credentials you created.
 - Under Host Key Verification Strategy, select Non verifying verification strategy.
 - Leave all other options as it is and click on Save
 - Click on the dev node and there shouldn't be any errors.
 - Just in case the dev node is in error state, then try to relaunch it.
-- Follow same steps for adding prod node, just take care about the node name, label and host.
+- Follow same steps for adding another node.
 
 #### Create and Configure the job:
 - On the left of the Jenkins dashboard, click on New Item.
-- Enter the job name go-app-deployment.
+- Enter the job name.
 - Select Pipeline job and click on OK.
 - Under Pipeline section keep selected Pipeline script as Definition
